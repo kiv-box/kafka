@@ -1,0 +1,7 @@
+# /etc/default/kafka-broker
+
+ENABLE="yes"
+export KAFKA_HEAP_OPTS="-Xmx4G -Xms4G"
+export LOG_DIR="/var/log/kafka"
+export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:/etc/kafka/log4j.properties"
+export JMX_PORT="9093"

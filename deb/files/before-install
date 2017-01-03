@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if ! getent group kafka >/dev/null; then
+        groupadd --system kafka >/dev/null
+fi
+
+if ! getent passwd kafka >/dev/null; then
+        useradd \
+          --system \
+          --gid kafka \
+          --no-create-home \
+          --home /nonexistent \
+          --shell /usr/sbin/nologin \
+          kafka >/dev/null
+fi
