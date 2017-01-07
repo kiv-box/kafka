@@ -1,0 +1,23 @@
+#{{ ansible_managed }}
+#
+
+tickTime=2000
+initLimit=15
+syncLimit=10
+dataDir=/var/lib/zookeeper
+clientPort=2181
+maxClientCnxns=256
+
+autopurge.snapRetainCount=12
+autopurge.purgeInterval=3
+
+{% for host in groups["all"] %}
+{% if hostvars[host]["inventory_hostname_short"].split('-')|last|int() <= zookeeper.leader_count %}
+server.{{ hostvars[host]["inventory_hostname_short"].split('-')|last }}={{ hostvars[host]["inventory_hostname"] }}:2888:3888
+{% else %}
+server.{{ hostvars[host]["inventory_hostname_short"].split('-')|last }}={{ hostvars[host]["inventory_hostname"] }}:2888:3888:observer
+{% endif %}
+{% endfor %}
+
+# Unsafe Options
+forceSync=no

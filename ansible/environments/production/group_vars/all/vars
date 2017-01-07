@@ -1,0 +1,10 @@
+---
+
+kafka:
+    version: '0.10.1.1-23'
+
+    log_dirs:
+        - /data1/kafka
+
+graphite:
+    host: graphite

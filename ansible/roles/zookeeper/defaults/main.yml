@@ -1,0 +1,6 @@
+---
+
+zookeeper:
+    conf_dir: 'default'
+    leaders_count: 3 # Odd number greather than 3
+    jmx_port: 2182

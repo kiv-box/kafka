@@ -1,0 +1,48 @@
+---
+
+- name: Install zookeeper packages
+  apt: >
+      name="{{ item }}"
+      update_cache=yes
+  with_items:
+    - zookeeper
+    - zookeeperd
+
+- name: Remove zookeeper init.d script
+  file: >
+      path=/etc/init.d/zookeeper
+      state=absent
+
+- name: Create zookeeper config directory
+  file: >
+      path="/etc/zookeeper/{{ zookeeper.conf_dir }}"
+      state=directory
+
+- name: Select zookeeper config
+  shell: >
+      update-alternatives --install /etc/zookeeper/conf zookeeper-conf /etc/zookeeper/{{ zookeeper.conf_dir }} 20 && \
+      update-alternatives --set zookeeper-conf /etc/zookeeper/{{ zookeeper.conf_dir }}
+
+- name: Generate zookeeper config
+  template: >
+      src="{{ item }}.j2"
+      dest="/etc/zookeeper/{{ zookeeper.conf_dir }}/{{ item }}"
+      owner=root
+      group=root
+      mode=0644
+  with_items:
+      - zoo.cfg
+      - configuration.xsl
+      - environment
+      - log4j.properties
+
+- name: Write server id to myid
+  shell: >
+      grep {{ ansible_fqdn }} /etc/zookeeper/{{ zookeeper.conf_dir }}/zoo.cfg \
+      | sed -r 's/^server\.([0-9]+)=.*/\1/' > /etc/zookeeper/{{ zookeeper.conf_dir }}/myid
+
+- name: Checking zookeeper state
+  service: >
+      name=zookeeper
+      state="{{ state }}"
+  when: state is defined

@@ -1,0 +1,119 @@
+# {{ ansible_managed }}
+
+# UPGRADE
+#inter.broker.protocol.version = 0.10.1
+#log.message.format.version    = 0.10.1
+#message.format.version        = 0.10.1-IV2
+
+# SYSTEM
+#
+
+# Auto create topics
+auto.create.topics.enable=false
+  # Disabled on prod
+default.replication.factor=3
+  # Work only when auto create
+
+# Delete topics
+delete.topic.enable=true
+
+# Gracefull shutdown
+controlled.shutdown.enable=true
+controlled.shutdown.max.retries=3
+
+background.threads=16
+
+# MESSAGES Must be the same size
+#
+message.max.bytes=2097152
+replica.fetch.max.bytes=2097152
+
+# NETWORK
+#
+num.network.threads=16
+num.replica.fetchers=8
+
+listeners=PLAINTEXT://0.0.0.0:9092
+{% if kafka.internal %}
+advertised.listeners=PLAINTEXT://int-{{ inventory_hostname }}:9092
+{% else %}
+advertised.listeners=PLAINTEXT://{{ inventory_hostname }}:9092
+{% endif %}
+
+group.max.session.timeout.ms=80000
+
+socket.send.buffer.bytes=819200
+socket.receive.buffer.bytes=819200
+
+# ZOOKEEPER
+#
+zookeeper.connect={{ kafka.zookeeper.hosts | join(',') }}{{ kafka.zookeeper.path }}
+
+# CLUSTER
+#
+
+broker.id={{ inventory_hostname_short.split('-')|last }}
+broker.id.generation.enable=false
+
+# Need to think: failover migration is auto? its works only when server returns.
+auto.leader.rebalance.enable=true
+unclean.leader.election.enable=true
+
+# Leader election treshold
+leader.imbalance.per.broker.percentage=10
+leader.imbalance.check.interval.seconds=900
+
+min.insync.replicas=1
+
+# STORAGE
+num.partitions=24
+
+num.io.threads=16
+num.recovery.threads.per.data.dir=8
+
+log.dirs={{ kafka.log_dirs | join(',') }}
+
+log.retention.hours=144
+log.roll.hours=144
+log.roll.jitter.hours=24
+
+log.segment.bytes=268435456
+log.segment.delete.delay.ms=60000
+
+log.retention.bytes=2147483648
+log.retention.check.interval.ms=300000
+
+# Cleaner
+log.cleanup.policy=delete
+log.cleaner.enable=true
+log.cleaner.threads=4
+
+# Offsets topic !!! Warning !!! can`t be edited without recreate cluster
+offsets.topic.num.partitions=150
+offsets.topic.replication.factor=3
+
+# LOGGING AND METRICS
+#
+
+# Log
+kafka.log4j.dir=/var/log/kafka
+
+# Metrics
+kafka.metrics.polling.interval.secs=60
+
+kafka.metrics.reporters=kafka.metrics.KafkaCSVMetricsReporter,com.criteo.kafka.KafkaGraphiteMetricsReporter,nl.techop.kafka.KafkaHttpMetricsReporter
+
+# Metrics CSV
+kafka.csv.metrics.reporter.enabled=true
+kafka.csv.metrics.dir=/var/log/kafka/csv
+
+# Metrics HTTP
+kafka.http.metrics.reporter.enabled=true
+kafka.http.metrics.host=0.0.0.0
+kafka.http.metrics.port={{ kafka.http_port }}
+
+# Metrics Graphite
+kafka.graphite.metrics.reporter.enabled=true
+kafka.graphite.metrics.host={{ graphite.host }}
+kafka.graphite.metrics.port={{ graphite.port }}
+kafka.graphite.metrics.group={{ inventory_hostname_short.split('-')[:-1]|join('.') }}.{{ inventory_hostname_short }}

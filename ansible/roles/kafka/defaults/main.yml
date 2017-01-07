@@ -1,0 +1,24 @@
+---
+
+kafka:
+    version: 'x.x.x.x'
+
+    internal: 'false' # internal host name perfix 'int-'
+
+    jmx_port:  '9190'
+    http_port: '9191'
+
+    heap: '8G'
+
+    zookeeper:
+        hosts:
+            - '127.0.0.1:2181'
+        path: '/kafka'
+
+    log_dirs:
+        - /kafka_logs_1
+        - /kafka_logs_2
+
+graphite:
+    host: graphite_host
+    port: 2003

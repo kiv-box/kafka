@@ -1,0 +1,50 @@
+---
+
+- name: "Installing kafka v{{ kafka.version }}"
+  apt: >
+      name="kafka={{ kafka.version }}"
+      state=present
+      update_cache=yes
+      force=yes
+
+- name: "Generate kafka default file"
+  template: >
+      src="kafka-broker_default.j2"
+      dest="/etc/default/kafka-broker"
+      owner=root
+      group=root
+      mode=0644
+
+- name: "Generate kafka upstart config"
+  template: >
+      src="kafka-broker_upstart.j2"
+      dest="/etc/init/kafka-broker.conf"
+      owner=root
+      group=root
+      mode=0644
+
+- name: "Generate kafka config files"
+  template: >
+      src="{{ item }}.j2"
+      dest="/etc/kafka/{{ item }}"
+      owner=root
+      group=root
+      mode=0644
+  with_items:
+    - 'server.properties'
+    - 'log4j.properties'
+
+- name: Creating logs directories
+  file: >
+      path="{{ item }}"
+      state=directory
+      owner=kafka
+      group=kafka
+  with_items:
+      - '{{ kafka.log_dirs }}'
+
+- name: "Checking kafka {{ state }} state"
+  service: >
+      name=kafka-broker
+      state=stopped
+  when: state is defined

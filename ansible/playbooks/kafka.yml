@@ -1,0 +1,8 @@
+---
+
+- name: Deploying kafka
+  hosts: all
+  become: yes
+
+  roles:
+    - kafka
