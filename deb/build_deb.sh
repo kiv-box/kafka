@@ -69,8 +69,8 @@ cp ${ORIGDIR}/files/kafka-topic-list-generator.sh usr/lib/kafka/bin/kafka-topic-
 chmod +x usr/lib/kafka/bin/kafka-topic-list-generator.sh
 
 # Need fix it
-cp ${ORIGDIR}/kafka-module-http-metrics-reporter/target/kafka-http-metrics-reporter-1.0.0-uber.jar usr/lib/kafka/libs
-cp ${ORIGDIR}/kafka-module-graphite/target/kafka-graphite-1.0.6.jar usr/lib/kafka/libs
+cp ${ORIGDIR}/kafka-module-http-metrics-reporter/target/kafka-http-metrics-reporter-*-uber.jar usr/lib/kafka/libs
+cp ${ORIGDIR}/kafka-module-graphite/target/kafka-graphite-*.jar usr/lib/kafka/libs
 
 fpm --output-type deb \
     --name ${NAME} \
