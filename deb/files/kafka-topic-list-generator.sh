@@ -1,7 +1,8 @@
 #!/bin/bash
 #
 
-TOPIC_LIST=$(/usr/lib/kafka/bin/kafka-topics.sh --list --zookeeper 127.0.0.1 | grep -v '__consumer_offsets'| grep -v 'for deletion' )
+TOPIC_LIST=$(/usr/lib/kafka/bin/kafka-topics.sh --list "$@")
+TOPIC_LIST=$(echo $TOPIC_LIST | grep -v '__consumer_offsets'| grep -v 'for deletion' )
 
 echo '{'
 echo '  "topics": ['
