@@ -6,7 +6,7 @@ set -u
 NAME='kafka'
 KAFKA_VERSION='0.10.1.1'
 SCALA_VERSION='2.11'
-DEB_PKG_VERSION='-24'
+DEB_PKG_VERSION='-25'
 DEB_PKG_DESCRIPTION='Apache Kafka is a distributed publish-subscribe messaging system.'
 DEB_PKG_URL='https://kafka.apache.org/'
 DEB_PKG_ARCH='all'
